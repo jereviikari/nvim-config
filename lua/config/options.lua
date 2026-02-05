@@ -3,7 +3,7 @@
 -- Add any additional options here
 
 -- Allow left/right arrow keys to wrap across line boundaries
-vim.opt.whichwrap:append("<,>")
+vim.opt.whichwrap:append("<,>,[,]")
 
 -- Use absolute line numbers (disable relative numbering)
 vim.opt.relativenumber = false
