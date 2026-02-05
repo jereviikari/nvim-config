@@ -16,7 +16,7 @@ end, { desc = "Load session (cwd)" })
 
 -- Load last session
 vim.keymap.set("n", "<leader>zL", function()
-  require("persisted").load_last()
+  require("persisted").load({ last = true })
 end, { desc = "Load last session" })
 
 -- List / pick sessions via Telescope
