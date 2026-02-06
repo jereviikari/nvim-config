@@ -26,3 +26,6 @@ vim.keymap.set("n", "<leader>zp", "<cmd>Telescope persisted<CR>", { desc = "Pick
 vim.keymap.set("c", "W", "SudaWrite", {
   desc = "Write file with sudo",
 })
+
+-- tmux--sessionizer
+vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
