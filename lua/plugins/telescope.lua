@@ -1,3 +1,7 @@
+--return {
+--  "nvim-telescope/telescope.nvim",
+--}
+
 return {
   "nvim-telescope/telescope.nvim",
   opts = function(_, opts)
