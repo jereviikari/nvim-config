@@ -17,6 +17,17 @@ vim.api.nvim_create_autocmd("ColorScheme", {
   end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.wrap = false
+    vim.opt_local.linebreak = true
+    vim.opt_local.breakindent = false
+    vim.opt_local.showbreak = ""
+  end,
+})
+
+
 -- Apply once on startup too
 --vim.api.nvim_create_autocmd("VimEnter", {
 --  callback = function()
