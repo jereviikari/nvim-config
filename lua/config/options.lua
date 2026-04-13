@@ -5,6 +5,9 @@
 -- Make Telescope the default picker
 vim.g.lazyvim_picker = "telescope"
 
+-- Keep formatting available manually, but do not run it on save.
+vim.g.autoformat = false
+
 -- Allow left/right arrow keys to wrap across line boundaries
 vim.opt.whichwrap:append("<,>,[,]")
 
