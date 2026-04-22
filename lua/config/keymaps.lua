@@ -21,6 +21,53 @@ vim.keymap.set("n", "<leader>u2", function()
   vim.wo.colorcolumn = "120"
 end, { desc = "Set color column to 120" })
 
+local function set_indent(width)
+  return function()
+    vim.bo.shiftwidth = width
+    vim.bo.tabstop = width
+    vim.bo.softtabstop = width
+    vim.bo.expandtab = true
+    vim.notify("Indent width set to " .. width .. " spaces")
+  end
+end
+
+local function reset_indent()
+  vim.cmd("setlocal shiftwidth< tabstop< softtabstop< expandtab<")
+
+  local ok, editorconfig = pcall(require, "editorconfig")
+  if ok then
+    editorconfig.config(0)
+  end
+
+  vim.notify(
+    ("Indent settings reset: shiftwidth=%d tabstop=%d %s"):format(
+      vim.bo.shiftwidth,
+      vim.bo.tabstop,
+      vim.bo.expandtab and "spaces" or "tabs"
+    )
+  )
+end
+
+vim.keymap.set("n", "<leader>uW2", set_indent(2), { desc = "Set indent width to 2 spaces" })
+vim.keymap.set("n", "<leader>uW4", set_indent(4), { desc = "Set indent width to 4 spaces" })
+vim.keymap.set("n", "<leader>uWr", reset_indent, { desc = "Reset indent width to project/default" })
+
+vim.keymap.set("n", "<leader>cP", function()
+  require("config.formatters").pick()
+end, { desc = "Pick Formatter" })
+
+vim.keymap.set("n", "<leader>ad", function()
+  require("config.codex").fix_diagnostics()
+end, { desc = "Fix File Diagnostics with Codex" })
+
+vim.keymap.set("n", "<leader>aD", function()
+  require("config.codex").fix_workspace_diagnostics()
+end, { desc = "Fix Workspace Diagnostics with Codex" })
+
+vim.keymap.set("n", "<leader>af", function()
+  require("config.codex").open_file_context()
+end, { desc = "Open Codex with File Context" })
+
 if vim.fn.executable("lazygit") == 1 then
   vim.keymap.set("n", "<leader>gz", function()
     Snacks.lazygit({ cwd = LazyVim.root.git() })
