@@ -27,6 +27,34 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "gitcommit",
+  callback = function(event)
+    vim.opt_local.formatexpr = ""
+    vim.keymap.set("n", "<leader>rp", "gwip", {
+      buffer = event.buf,
+      desc = "Reflow paragraph",
+    })
+    vim.keymap.set("x", "<leader>r", "gw", {
+      buffer = event.buf,
+      desc = "Reflow selection",
+    })
+  end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "text", "markdown" },
+  callback = function(event)
+    vim.keymap.set("n", "<leader>rp", "gwip", {
+      buffer = event.buf,
+      desc = "Reflow paragraph",
+    })
+    vim.keymap.set("x", "<leader>r", "gw", {
+      buffer = event.buf,
+      desc = "Reflow selection",
+    })
+  end,
+})
 
 -- Apply once on startup too
 --vim.api.nvim_create_autocmd("VimEnter", {
