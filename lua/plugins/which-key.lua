@@ -9,7 +9,7 @@ return {
       spec = {
         {
           mode = "n",
-          { "<leader>a", group = "ai" },
+          { "<leader>a", group = "AI" },
           { "<leader>cg", group = "goto" },
           { "<leader>dP", group = "python debug" },
           { "<leader>r", group = "reflow" },

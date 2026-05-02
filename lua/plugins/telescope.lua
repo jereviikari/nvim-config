@@ -1,11 +1,8 @@
---return {
---  "nvim-telescope/telescope.nvim",
---}
-
 return {
   "nvim-telescope/telescope.nvim",
-  opts = function(_, opts)
-    require("telescope").load_extension("persisted")
-    return opts
+  dependencies = { "olimorris/persisted.nvim" },
+  config = function(_, opts)
+    require("telescope").setup(opts)
+    pcall(require("telescope").load_extension, "persisted")
   end,
 }

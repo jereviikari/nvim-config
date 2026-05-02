@@ -56,6 +56,33 @@ vim.keymap.set("n", "<leader>cP", function()
   require("config.formatters").pick()
 end, { desc = "Pick Formatter" })
 
+-- Toggle only Neovim diagnostics for the current buffer; this hides linter output without stopping LSP clients.
+local function toggle_buffer_diagnostics()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local enable = not vim.diagnostic.is_enabled({ bufnr = bufnr })
+
+  vim.diagnostic.enable(enable, { bufnr = bufnr })
+  if not enable then
+    vim.diagnostic.reset(nil, bufnr)
+  end
+
+  if enable then
+    pcall(function()
+      require("lint").try_lint()
+    end)
+  end
+
+  vim.notify("Diagnostics " .. (enable and "enabled" or "disabled"))
+end
+
+vim.api.nvim_create_user_command("ToggleDiagnostics", toggle_buffer_diagnostics, {
+  desc = "Toggle diagnostics for current buffer",
+  force = true,
+})
+
+vim.keymap.set({ "n", "x", "i" }, "<A-d>", toggle_buffer_diagnostics, { desc = "Toggle Diagnostics" })
+vim.keymap.set({ "n", "x" }, "<leader>ud", toggle_buffer_diagnostics, { desc = "Toggle Diagnostics" })
+
 vim.keymap.set("n", "<leader>ad", function()
   require("config.codex").fix_diagnostics()
 end, { desc = "Fix File Diagnostics with Codex" })
@@ -77,10 +104,72 @@ end
 -- Horizontal scrolling
 vim.keymap.set("n", "<M-Right>", "4zl", { silent = true })
 vim.keymap.set("n", "<M-Left>", "4zh", { silent = true })
+
+-- Editor-style selection with Shift+Arrow; Ctrl+Shift+Left/Right selects by word.
+-- These are explicit because terminal Neovim does not treat Shift+Arrow as selection by default.
+local select_motions = {
+  ["<S-Left>"] = "<Left>",
+  ["<S-Right>"] = "<Right>",
+  ["<S-Up>"] = "<Up>",
+  ["<S-Down>"] = "<Down>",
+}
+
+for key, motion in pairs(select_motions) do
+  vim.keymap.set("n", key, "v" .. motion, { desc = "Start selection" })
+  vim.keymap.set("x", key, motion, { desc = "Extend selection" })
+  vim.keymap.set("i", key, "<C-\\><C-n>v" .. motion, { desc = "Start selection" })
+end
+
 vim.keymap.set({ "n", "x" }, "<C-Right>", "w", { desc = "Next word" })
 vim.keymap.set({ "n", "x" }, "<C-Left>", "b", { desc = "Previous word" })
+vim.keymap.set("i", "<C-Right>", "<C-o>w", { desc = "Next word" })
+vim.keymap.set("i", "<C-Left>", "<C-o>b", { desc = "Previous word" })
+vim.keymap.set("n", "<C-S-Right>", "vw", { desc = "Select next word" })
+vim.keymap.set("n", "<C-S-Left>", "vb", { desc = "Select previous word" })
+vim.keymap.set("x", "<C-S-Right>", "w", { desc = "Select next word" })
+vim.keymap.set("x", "<C-S-Left>", "b", { desc = "Select previous word" })
+vim.keymap.set("i", "<C-S-Right>", "<C-\\><C-n>vw", { desc = "Select next word" })
+vim.keymap.set("i", "<C-S-Left>", "<C-\\><C-n>vb", { desc = "Select previous word" })
 vim.keymap.set({ "n", "x", "o" }, "<M-Up>", "{", { desc = "Previous paragraph" })
 vim.keymap.set({ "n", "x", "o" }, "<M-Down>", "}", { desc = "Next paragraph" })
+
+--vim.keymap.set("n", "<leader>ap", "v{", { desc = "Select previous paragraph" })
+--vim.keymap.set("n", "<leader>an", "v}", { desc = "Select next paragraph" })
+--
+--vim.keymap.set("x", "<leader>ap", "{", { desc = "Extend selection previous paragraph" })
+--vim.keymap.set("x", "<leader>an", "}", { desc = "Extend selection next paragraph" })
+--
+--vim.keymap.set("i", "<leader>ap", "<C-\\><C-n>v{", { desc = "Select previous paragraph" })
+--vim.keymap.set("i", "<leader>an", "<C-\\><C-n>v}", { desc = "Select next paragraph" })
+
+
+--vim.keymap.set("n", "<C-S-k>", "v{")
+--vim.keymap.set("n", "<C-S-j>", "v}")
+--
+--vim.keymap.set("x", "<C-S-k>", "{")
+--vim.keymap.set("x", "<C-S-j>", "}")
+
+
+--vim.keymap.set("n", "gz", "v{", { desc = "Select previous paragraph" })
+--vim.keymap.set("n", "gZ", "v}", { desc = "Select next paragraph" })
+--
+--vim.keymap.set("x", "gz", "{", { desc = "Extend selection previous paragraph" })
+--vim.keymap.set("x", "gZ", "}", { desc = "Extend selection next paragraph" })
+
+--vim.keymap.set("n", "g{", "v{", { desc = "Select previous paragraph" })
+--vim.keymap.set("n", "g}", "v}", { desc = "Select next paragraph" })
+--vim.keymap.set("x", "g{", "{", { desc = "Extend selection up paragraph" })
+--vim.keymap.set("x", "g}", "}", { desc = "Extend selection down paragraph" })
+
+
+--vim.keymap.set("n", "<M-S-Up>", "v{", { desc = "Select previous paragraph" })
+--vim.keymap.set("n", "<M-S-Down>", "v}", { desc = "Select next paragraph" })
+--
+--vim.keymap.set("x", "<M-S-Up>", "{", { desc = "Extend selection up paragraph" })
+--vim.keymap.set("x", "<M-S-Down>", "}", { desc = "Extend selection down paragraph" })
+--
+--vim.keymap.set("i", "<M-S-Up>", "<C-\\><C-n>v{", { desc = "Select previous paragraph" })
+--vim.keymap.set("i", "<M-S-Down>", "<C-\\><C-n>v}", { desc = "Select next paragraph" })
 
 local function move_function(method)
   return function()

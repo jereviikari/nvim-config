@@ -25,6 +25,9 @@ return {
           prev = "<M-p>",
         },
       })
+      opts.panel = vim.tbl_deep_extend("force", opts.panel or {}, {
+        enabled = false,
+      })
     end,
     config = function(_, opts)
       require("copilot").setup(opts)
